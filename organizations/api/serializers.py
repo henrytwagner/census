@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from users.models import UserProfile
 from organizations.models import Organization, UserOrganization, ContactOrganization
-from contacts.models import Contacts
+from contacts.models import Contact
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
