@@ -10,7 +10,7 @@ class UserContactsListView(generics.ListAPIView):
     API view that returns all contacts for the logged-in user.
     """
     serializer_class = ContactSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Filter contacts for the authenticated user.
