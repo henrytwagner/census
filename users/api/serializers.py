@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from users.models import UserProfile
-from organizations.models import Organization, UserOrganization, ContactOrganization
-from contacts.models import Contacts
 
 User = get_user_model()
 
@@ -22,3 +20,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['user', 'profile_image_url', 'bio']
+        
+class UserWithProfileSerializer(serializers.ModelSerializer):
+    # TODO: Fix this serializer -- currently passes all user info twice
+    profile = UserProfileSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'profile']
