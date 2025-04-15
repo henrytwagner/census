@@ -21,10 +21,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['user', 'profile_image_url', 'bio']
         
-class UserWithProfileSerializer(serializers.ModelSerializer):
-    # TODO: Fix this serializer -- currently passes all user info twice
-    profile = UserProfileSerializer(read_only=True)
+class MeSerializer(serializers.ModelSerializer):
+    profile_image_url = serializers.CharField(source='profile.profile_image_url', read_only=True)
+    bio = serializers.CharField(source='profile.bio', read_only=True)
+    # Add additional profile fields here if needed
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'profile']
+        fields = [
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'profile_image_url',
+            'bio'
+        ]
