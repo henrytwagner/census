@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from users.models import UserProfile
 from organizations.models import Organization, UserOrganization, ContactOrganization
-from contacts.models import Contact
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,3 +18,15 @@ class ContactOrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactOrganization
         fields = ['contact', 'organization']
+        
+class OrgMemebersSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    # If there’s no profile, you can return an empty string
+    profile_image_url = serializers.CharField(source='user.profile.profile_image_url', default='', allow_blank=True)
+    role = serializers.CharField()
+
+    class Meta:
+        model = UserOrganization
+        fields = ['username', 'first_name', 'last_name', 'profile_image_url', 'role']
