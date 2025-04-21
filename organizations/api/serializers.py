@@ -19,7 +19,8 @@ class ContactOrganizationSerializer(serializers.ModelSerializer):
         model = ContactOrganization
         fields = ['contact', 'organization']
         
-class OrgMemebersSerializer(serializers.ModelSerializer):
+class OrgMembersSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(source='user.id')
     username = serializers.CharField(source='user.username')
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
@@ -29,4 +30,4 @@ class OrgMemebersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserOrganization
-        fields = ['username', 'first_name', 'last_name', 'profile_image_url', 'role']
+        fields = ['id', 'username', 'first_name', 'last_name', 'profile_image_url', 'role']

@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 from organizations.models import Organization, UserOrganization  # Update with your actual app name
-from .serializers import OrganizationSerializer, OrgMemebersSerializer  # Your organization serializer
+from .serializers import OrganizationSerializer, OrgMembersSerializer  # Your organization serializer
 
 # List all organizations (can be adjusted to only show joinable ones, etc.)
 class OrganizationListView(generics.ListAPIView):
@@ -39,7 +39,7 @@ class OrganizationRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView
             raise NotFound("Organization not found")
         
 class OrgMembersListView(generics.ListAPIView):
-    serializer_class = OrgMemebersSerializer
+    serializer_class = OrgMembersSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
