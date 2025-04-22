@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from users.models import UserProfile
+from rest_framework.validators import UniqueValidator
+
 
 User = get_user_model()
 
@@ -37,3 +39,30 @@ class MeSerializer(serializers.ModelSerializer):
             'profile_image_url',
             'bio'
         ]
+        
+class RegisterUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        validators=[
+          UniqueValidator(
+            queryset=User.objects.all(),
+            message="That username is already taken."
+          )
+        ]
+    )
+    
+    password = serializers.CharField(write_only=True, min_length=8)
+    password2 = serializers.CharField(write_only=True, label="Confirm password", min_length=8)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'password', 'password2']
+
+    def validate(self, data):
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError({"password2": "Passwords must match."})
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('password2')
+        user = User.objects.create_user(**validated_data)
+        return user
