@@ -23,6 +23,7 @@ class UserOrganization(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     role = models.CharField(max_length=100, blank=True, null=True)
     joined_at = models.DateTimeField(auto_now_add=True)
+    last_accessed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ('user', 'organization')
