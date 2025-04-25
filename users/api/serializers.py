@@ -24,8 +24,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ['user', 'profile_image_url', 'bio']
         
 class MeSerializer(serializers.ModelSerializer):
-    profile_image_url = serializers.CharField(source='profile.profile_image_url', read_only=True)
-    bio = serializers.CharField(source='profile.bio', read_only=True)
+    profile_image_url = serializers.CharField(source='profile.profile_image_url', allow_blank=True, required=False)
+    bio = serializers.CharField(source='profile.bio', allow_blank=True, required=False)
     # Add additional profile fields here if needed
 
     class Meta:
@@ -39,7 +39,21 @@ class MeSerializer(serializers.ModelSerializer):
             'profile_image_url',
             'bio'
         ]
+        read_only_fields = ['id', 'username']
         
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile', {})
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        
+        profile=instance.profile
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
+        profile.save()
+        return instance
+    
 class RegisterUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         validators=[
