@@ -11,7 +11,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 class UserOrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserOrganization
-        fields = ['user', 'organization', 'role', 'joined_at']
+        fields = ['user', 'organization', 'role', 'status', 'joined_at', 'last_accessed_at']
         read_only_fields = ['joined_at']
 
 class ContactOrganizationSerializer(serializers.ModelSerializer):
@@ -27,7 +27,9 @@ class OrgMembersSerializer(serializers.ModelSerializer):
     # If there’s no profile, you can return an empty string
     profile_image_url = serializers.CharField(source='user.profile.profile_image_url', default='', allow_blank=True)
     role = serializers.CharField()
+    status = serializers.CharField()
+    joined_at = serializers.DateTimeField()
 
     class Meta:
         model = UserOrganization
-        fields = ['id', 'username', 'first_name', 'last_name', 'profile_image_url', 'role']
+        fields = ['id', 'username', 'first_name', 'last_name', 'profile_image_url', 'role', 'status', 'joined_at']
