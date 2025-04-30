@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from users.models import UserProfile
 from rest_framework.validators import UniqueValidator
+from contacts.models import Contact
+
 
 
 User = get_user_model()
@@ -80,3 +82,44 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         validated_data.pop('password2')
         user = User.objects.create_user(**validated_data)
         return user
+    
+
+    
+class PublicProfileSerializer(serializers.ModelSerializer):
+    """Serialize a user's public profile + whether the current user
+       already has a private contact for them."""
+    profile_image_url = serializers.CharField(
+        source='profile.profile_image_url', read_only=True, allow_blank=True
+    )
+    bio = serializers.CharField(
+        source='profile.bio', read_only=True, allow_blank=True
+    )
+    my_contact = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'email',
+            'first_name', 'last_name',
+            'profile_image_url', 'bio',
+            'my_contact',
+        ]
+        read_only_fields = ['id', 'username', 'email', 
+                            'first_name', 'last_name',
+                            'profile_image_url', 'bio', 'my_contact']
+
+    def get_my_contact(self, user):
+        """If the requesting user already has a Contact linked to this User, return it."""
+        request_user = self.context['request'].user
+        contact = Contact.objects.filter(
+            owner=request_user,
+            linked_profile=user
+        ).first()
+        if not contact:
+            return None
+        return {
+            'id':         str(contact.id),
+            'first_name': contact.first_name,
+            'last_name':  contact.last_name,
+            # add any other private‐only fields you want surfaced
+        }
